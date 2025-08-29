@@ -60,13 +60,7 @@ To view the map locally:
    http://localhost:8080/index.html
    ```
 
-### 2. Public Hosting
 
-Options to share publicly:
-
-* **GitHub Pages** → Upload the folder to a GitHub repo → enable Pages → access via `<username>.github.io/<repo>`
-* **Netlify / Vercel** → Drag & drop folder for free hosting
-* **Any static web host** (Apache/Nginx/S3/Cloudflare Pages)
 
 ---
 
