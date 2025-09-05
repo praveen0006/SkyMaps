@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+        <meta name="viewport" content="initial-scale=1,width=device-width">
         <meta name="mobile-web-app-capable" content="yes">
         <meta name="apple-mobile-web-app-capable" content="yes">
         <link rel="stylesheet" href="css/leaflet.css">
@@ -12,6 +12,9 @@
         <link rel="stylesheet" href="css/fontawesome-all.min.css">
         <link rel="stylesheet" href="css/leaflet.photon.css">
         <link rel="stylesheet" href="css/leaflet-measure.css">
+        <!-- Leaflet Routing Machine CSS -->
+        <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.css" />
+
         <style>
         html, body, #map {
             width: 100%;
@@ -104,6 +107,24 @@
             secondaryAreaUnit: 'hectares'
         });
         measureControl.addTo(map);
+        // Add Routing Machine
+        L.Routing.control({
+            waypoints: [
+                null, // Start point will be chosen by user
+                null  // End point will be chosen by user
+            ],
+            routeWhileDragging: true,
+            geocoder: L.Control.Geocoder.nominatim(), // Optional search bar
+            router: L.Routing.osrmv1({
+                serviceUrl: 'https://router.project-osrm.org/route/v1'
+            }),
+            createMarker: function(i, waypoint, n) {
+                return L.marker(waypoint.latLng, {
+                    draggable: true
+                }).bindPopup(i === 0 ? "Start" : (i === n - 1 ? "Destination" : "Waypoint"));
+            }
+        }).addTo(map);
+
         document.getElementsByClassName('leaflet-control-measure-toggle')[0].innerHTML = '';
         document.getElementsByClassName('leaflet-control-measure-toggle')[0].className += ' fas fa-ruler';
         var bounds_group = new L.featureGroup([]);
@@ -474,5 +495,10 @@
         map.addLayer(layer_Drone_Path_7);
         setBounds();
         </script>
+        <!-- Leaflet Routing Machine JS -->
+        <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
+        <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+        <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
+
     </body>
 </html>
