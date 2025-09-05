@@ -16,6 +16,7 @@
         <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
 
 
+
         <style>
         html, body, #map {
             width: 100%;
@@ -67,22 +68,29 @@
             zoomControl:false, maxZoom:28, minZoom:1
         }).fitBounds([[17.640846964773274,77.79413073391096],[17.64792223893896,77.80880197670284]]);
 
+        // Drone Routing Control
         L.Routing.control({
-            waypoints: [
-                null, // Start point will be chosen by user
-                null  // End point will be chosen by user
-            ],
+            waypoints: [null, null], // User will pick Start & End
             routeWhileDragging: true,
-            geocoder: L.Control.Geocoder.nominatim(), // Optional search bar
-            router: L.Routing.osrmv1({
-                serviceUrl: 'https://router.project-osrm.org/route/v1'
-            }),
-            createMarker: function(i, waypoint, n) {
-                return L.marker(waypoint.latLng, {
-                    draggable: true
-                }).bindPopup(i === 0 ? "Start" : (i === n - 1 ? "Destination" : "Waypoint"));
+            geocoder: L.Control.Geocoder.nominatim(),
+            createMarker: function(i, wp, n) {
+                return L.marker(wp.latLng, { draggable: true })
+                    .bindPopup(i === 0 ? "Start" : (i === n - 1 ? "Destination" : "Waypoint"));
+            },
+            // Straight-line (drone style) routing
+            router: {
+                route: function(waypoints, callback) {
+                    var line = L.polyline(waypoints.map(wp => wp.latLng), { color: 'blue' });
+                    callback(null, [{
+                        name: "Drone Route",
+                        coordinates: waypoints.map(wp => wp.latLng),
+                        instructions: []
+                    }]);
+                    return { line: line };
+                }
             }
         }).addTo(map);
+
         var hash = new L.Hash(map);
 
         map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
@@ -499,10 +507,9 @@
         map.addLayer(layer_Drone_Path_7);
         setBounds();
         </script>
-        <!-- Leaflet Routing Machine JS -->
         <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
         <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
-        <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
+
 
     </body>
 </html>
